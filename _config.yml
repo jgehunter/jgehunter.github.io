@@ -1,0 +1,60 @@
+remote_theme: mmistakes/minimal-mistakes
+
+title: "Jorge Hunter"
+subtitle: "eFX · Microstructure · Quantitative Trading"
+name: "Jorge Hunter"
+description: "Practitioner notes on electronic FX, market microstructure, and quantitative trading."
+url: "https://jgehunter.github.io"
+
+minimal_mistakes_skin: "dark"
+
+author:
+  name: "Jorge Hunter"
+  bio: "eFX Quant. Market microstructure, optimal execution, inventory management."
+  location: "Madrid"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jgehunter"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://linkedin.com/in/jgehunter"
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      show_date: true
+      toc: true
+  - scope:
+      path: ""
+    values:
+      layout: single
+      author_profile: true
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+header:
+  overlay_color: "#000"
+  overlay_filter: "0.5"
+
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jgehunter"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://linkedin.com/in/jgehunter"
+
+permalink: /:year/:month/:title/
+
+paginate: 10
+paginate_path: /page:num/
