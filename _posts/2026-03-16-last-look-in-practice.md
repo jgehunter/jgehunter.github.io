@@ -85,11 +85,11 @@ where $$\Phi$$ is the standard normal CDF. Both depend on $$\theta$$ only throug
 
 Conditional on filling the client buy at the ask $$M_0 + s$$, the dealer's instantaneous P&L is:
 
-$$\text{P\&L} = (M_0 + s) - M_\tau = s - \Delta M$$
+$$\text{PnL} = (M_0 + s) - M_\tau = s - \Delta M$$
 
 Under the **asymmetric** design, we only fill when $$\Delta M \leq \theta$$, so the expected P&L per *filled* trade is:
 
-$$\mathbb{E}[\text{P\&L} \mid \text{fill}] = s - \mathbb{E}[\Delta M \mid \Delta M \leq \theta]$$
+$$\mathbb{E}[\text{PnL} \mid \text{fill}] = s - \mathbb{E}[\Delta M \mid \Delta M \leq \theta]$$
 
 The conditional expectation of a truncated normal is a standard result:
 
@@ -97,7 +97,7 @@ $$\mathbb{E}[\Delta M \mid \Delta M \leq \theta] = -\sigma\sqrt{\tau} \cdot \fra
 
 where $$z = \theta / \sigma\sqrt{\tau}$$ and $$\phi$$ is the standard normal PDF. That ratio $$\phi(z)/\Phi(z)$$ is the inverse Mills ratio. So:
 
-$$\mathbb{E}[\text{P\&L} \mid \text{fill}] = s + \sigma\sqrt{\tau} \cdot \frac{\phi(z)}{\Phi(z)}$$
+$$\mathbb{E}[\text{PnL} \mid \text{fill}] = s + \sigma\sqrt{\tau} \cdot \frac{\phi(z)}{\Phi(z)}$$
 
 The second term is always positive. Last Look systematically improves the dealer's expected P&L on filled trades by filtering out the worst adverse moves. The dealer captures the spread *plus* a bonus from truncation.
 
@@ -119,7 +119,7 @@ $$\mathbb{E}[\Delta M \mid \lvert\Delta M\rvert \leq \theta] > 0$$
 
 but it's *less than* $$\alpha$$, the unconditional adverse selection. The dealer still benefits from symmetric rejection because truncation pulls the conditional mean back toward zero. The dealer's expected P&L per filled trade under symmetric rejection becomes:
 
-$$\mathbb{E}[\text{P\&L} \mid \text{fill}] = s - \mathbb{E}[\Delta M \mid \lvert\Delta M\rvert \leq \theta]$$
+$$\mathbb{E}[\text{PnL} \mid \text{fill}] = s - \mathbb{E}[\Delta M \mid \lvert\Delta M\rvert \leq \theta]$$
 
 This is less than $$s$$ (unlike the zero-drift case), but greater than $$s - \alpha$$ (what the dealer would earn with no Last Look at all). Symmetric Last Look doesn't eliminate adverse selection, but it mitigates it. The truncation clips the tails of the biased distribution, and because the adverse tail is fatter than the favourable tail, the clipping is asymmetric in its effect even though the rule is symmetric in its design.
 
@@ -127,9 +127,9 @@ The chart below makes this point more clearly than algebra can. We plot $$\mathb
 
 ![Shadow Spread by Design and Adverse Selection](/assets/images/last-look/chart2_shadow_spread.png)
 
-The dashed blue line is the textbook case everyone focuses on: symmetric rejection with no adverse selection, which gives you a shadow spread of exactly zero. Nice in theory. But add adverse selection ($$\alpha$$ = 0.15 or 0.30, the solid blue and orange lines) and the shadow spread goes positive and grows with the hold window. The red line shows asymmetric rejection without adverse selection, which *also* generates a substantial shadow spread, but in the opposite direction: the dealer actually benefits from truncation even on uninformed flow. This is the extraction the Global Code is designed to prevent.
+The dashed blue line is the textbook case everyone focuses on: symmetric rejection with no adverse selection, which gives you a shadow spread of exactly zero. That's also what you get with no Last Look at all when flow is uninformed, so in the zero-drift case symmetric rejection is doing nothing for the dealer. It's a nice compliance feature that changes nothing about your economics.
 
-The crucial observation is that the blue lines sit between the red line and the dashed line. Symmetric rejection with adverse selection gives the dealer real protection (the gap between the blue line and the dashed line) without the indiscriminate extraction of the asymmetric design. The more toxic the flow (higher $$\alpha$$), the more valuable symmetric rejection becomes.
+But add adverse selection ($$\alpha$$ = 0.15 or 0.30, the solid blue and orange lines) and the picture changes. Without Last Look, the dealer just eats the full adverse selection on every trade. With symmetric rejection, the shadow spread goes positive but stays well below $$\alpha$$, meaning the dealer is getting genuine protection. The gap between the no-LL cost (which would be $$\alpha$$) and the symmetric shadow spread is the risk management benefit. The red line shows asymmetric rejection without adverse selection, which generates a substantial shadow spread even on uninformed flow, the extraction the Global Code is designed to prevent. The more toxic the flow (higher $$\alpha$$), the more valuable symmetric rejection becomes relative to having no Last Look at all.
 
 This is the key insight that makes symmetric Last Look defensible from the dealer's perspective, not just the client's. Without the adverse selection bias, symmetric rejection would be a pure stale-quote filter with no P&L impact, a nice thing to put in your disclosure documents but not something that actually changes your economics. With the bias, it's a meaningful risk management tool that reduces the dealer's expected loss per trade without introducing the asymmetric extraction that the Global Code is designed to prevent. You're not clawing back option premium from uninformed corporates. You're protecting against the informed fraction of your flow.
 
