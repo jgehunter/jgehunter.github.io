@@ -6,8 +6,10 @@ categories: [prediction-markets]
 tags: [bayesian, rugby, Champions Cup, Polymarket, Bordeaux, Leinster, glicko]
 excerpt: "I'm driving to Bilbao to support Bordeaux Bègles in the 2026 European Rugby Champions Cup final. My model says I should bet on Leinster. Here's how it got there."
 header:
-  image: /assets/images/champions-cup-final/fig00_hero.png
-  teaser: /assets/images/champions-cup-final/fig00_hero.png
+  image: /assets/images/champions-cup-final/header_stade_chaban.jpg
+  image_description: "Stade Chaban-Delmas, Union Bordeaux Bègles' home ground, before a rugby match"
+  caption: "Stade Chaban-Delmas before a UBB match (photo: [R4gn0r0ck](https://commons.wikimedia.org/wiki/File:Stade_Chaban-Delmas_Rugby.jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/))"
+  teaser: /assets/images/champions-cup-final/header_stade_chaban.jpg
 toc: true
 toc_sticky: true
 mathjax: true
@@ -20,6 +22,8 @@ Polymarket has Bordeaux at 60.5%. William Hill has them at the equivalent of 77%
 After two weeks of being built, tested, broken, fixed, and tested again, my model thinks Bordeaux is a 45% chance. Leinster is the slight favourite.
 
 So I have an awkward problem. I support a team that the market backs and the model fades. What follows is what happened when I set myself the analytical challenge of pricing a binary settlement market on a sports final, and the model started arguing with the team I'm flying in to watch.
+
+{% include figure image_path="/assets/images/champions-cup-final/fig00_hero.png" alt="Probability that Bordeaux Bègles wins: bookmakers, Polymarket, my model" %}
 
 ## Why the bookmakers and Polymarket don't agree
 
