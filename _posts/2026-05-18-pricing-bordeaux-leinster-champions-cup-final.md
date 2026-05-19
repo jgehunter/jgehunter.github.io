@@ -51,7 +51,7 @@ But Glicko, fed twelve years of European rugby, predicts **Bordeaux at about 32%
 
 ## What I tried that didn't work
 
-A thirty-point disagreement between you and the market is either an edge or a blind spot. Before trusting the prior, I tested every hypothesis I could think of for what the model might be missing. The bar was the same throughout: each candidate had to improve Brier on the 2024-25 Champions Cup matches specifically, by at least 3% relative, without degrading calibration.
+Confession: at this point, what I was really doing was trying to bribe the model into preferring Bordeaux. Every candidate change below is in principle a defensible piece of statistical hygiene. In practice I was hoping at least one of them would make my model agree with my heart. The bar I had set was the same throughout: each candidate had to improve Brier on the 2024-25 Champions Cup matches specifically, by at least 3% relative, without degrading calibration. A bar I had set, very deliberately, before any of the candidates were run.
 
 **Squad rotation, Bordeaux side.** Top 14 is a 26-round league plus playoffs against URC's 18 regular-season rounds. Bordeaux plays a third more domestic matches than Leinster in a normal season, more in a year that reaches a Champions Cup final, and any reasonable coach rests key players around the big European weekends. Bordeaux's 14W 10L 1D Top 14 record might look ordinary partly because some of those losses are tactical. I built a rotation-weighted Glicko using lineup data: parse each matchday squad, compare to that club's Champions Cup starting XV (since nobody rotates in the pool stage), and weight matches by how close the on-field side was to the A-team. The data showed Bordeaux rotating modestly around European fixtures, less than Leinster does in URC, but the rotation-weighted model failed the cup-Brier test. The hypothesis is real; the correction doesn't help on the holdout.
 
@@ -75,11 +75,11 @@ Glicko-2 ignores margin entirely. A 64-14 demolition and a 1-point heart attack 
 
 Bordeaux didn't just win their three knockouts. They averaged a 25-point margin doing it, including a quarter-final dismantling of the team currently top of Top 14. Leinster averaged 17 points across theirs, and one of their wins was a one-score game with about a minute left.
 
-The same pattern shows up across the panel, not just this season. Every European cup match in twelve years, plotted as `(rating differential going in)` versus `(actual margin)`:
+And the same pattern shows up across the panel, not just this season. Take every European cup match in the last twelve years, work out the margin Glicko would have predicted from the rating gap, and subtract it from the actual margin. The result, per team, is a distribution of "points scored above expectation":
 
-{% include figure image_path="/assets/images/champions-cup-final/fig02_cup_overperformance_scatter.png" alt="Bordeaux's CC matches sit above the line" %}
+{% include figure image_path="/assets/images/champions-cup-final/fig02_cup_overperformance_scatter.png" alt="Bordeaux's CC matches sit clearly above expectation; Leinster's sit on it" %}
 
-Bordeaux's orange dots tilt above the diagonal: about 60% of their European matches land on the "won by more than rating predicts" side of the line, with an average overperformance of around five points. Leinster's blue dots cluster on the line — they win roughly the matches Glicko expects them to win, by roughly the margins Glicko predicts. Edinburgh and Benetton, both URC sides who tend to be unremarkable in the league but punch up in cups, are the largest overperformers of all. That last detail does matter: if my model were just confusing "I want this team to win" for signal, it wouldn't be flagging Edinburgh as the league's best cup overperformer.
+Bordeaux's mean sits well to the right of zero. Leinster's mean sits exactly on zero. The two of them have played radically different versions of the Champions Cup over a decade: Bordeaux's wins have been bigger than their rating would suggest, Leinster's have been precisely as big as their rating predicts. Edinburgh and Benetton, who play in the URC but make nuisances of themselves in Europe, sit further right than Bordeaux. That is not the pattern I would have produced if I were tuning the model to flatter my team.
 
 {% include figure image_path="/assets/images/champions-cup-final/fig07_cup_dominance.png" alt="European cup overperformers, multi-season" %}
 
@@ -105,7 +105,7 @@ The remaining 15 points are honestly open. Polymarket has been trading this matc
 
 The model says Leinster, mildly. The market says Bordeaux, firmly. I have spent two weeks building the model precisely so that I'd trust it more than my instincts.
 
-So I will probably bet against the team I am driving four hundred kilometres to support. Small size — enough to carry some skin, not enough to spoil the beer. The neat thing about a small contrarian bet on your own team is that it works either way: if Bordeaux win on Saturday, I am in the stadium losing a bet I'd happily pay to lose; if Leinster win, I am quietly devastated but the model and the bet make me whole. Win-win, on a logarithmic utility function.
+So I will probably bet against the team I am driving four hundred kilometres to support. Small size — enough to carry some skin, not enough to spoil the beer. The neat thing about a contrarian bet on your own team is that it works either way. If Bordeaux win on Saturday, I am in the stadium losing a bet I would happily pay to lose. If Leinster win, I am quietly devastated, but the bet pays for the consolation beers (and, with luck, the next morning's). Win-win, on a sufficiently logarithmic utility function.
 
 The whole point of building this kind of thing is that the model has a job and your gut has a different job, and you are not supposed to confuse them. If you have built a careful prior and the market is offering you a price outside your 90% credible interval, the framework is telling you something. Take the price.
 
