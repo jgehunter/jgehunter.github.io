@@ -4,7 +4,7 @@ title: "I built a Bayesian model for the Champions Cup final. It says I should b
 date: 2026-05-18
 categories: [prediction-markets]
 tags: [bayesian, rugby, Champions Cup, Polymarket, Bordeaux, Leinster, glicko]
-excerpt: "Polymarket has Bordeaux at 60%. The bookmakers price them as a near-lock. My model — built over two weeks, broken several times — has them at 45%. Here's how the disagreement got that wide, and how it closed."
+excerpt: "Polymarket has Bordeaux at 60%. The bookmakers price them as a near-lock. My model, after two weeks of being built and broken and rebuilt, has them at 45%. Here is how the disagreement got that wide, and how it closed."
 header:
   image: /assets/images/champions-cup-final/header_ubb_action.jpg
   image_description: "Union Bordeaux Bègles in action against Stade Français (Top 14, January 2025)"
@@ -33,7 +33,7 @@ William Hill quotes Bordeaux at 3/10 and Leinster at 12/5. Convert to implied pr
 
 Polymarket has no house. The market is peer-to-peer, the Yes and No sides add to 100.5%, and the price is whatever the marginal trader is willing to risk capital on. The 60.5% is the consensus of people who have actually committed money, not a defensive line set by a trading desk worried about retail flow. UK bookmakers tend to overprice the favourite on big public events: most casual money backs the favourite, the book shortens the favourite to discourage one-sided exposure, and the price drifts into a territory the bookmaker would not, deep down, defend on its merits.
 
-For the rest of the post, when I say "the market", I mean **Polymarket at 60.5%**. That is the number I would actually have to take a position against.
+For the rest of the post, when I say "the market", I mean **Polymarket at 60.5%**. That is the number I would have to take a position against.
 
 ## Building a prior
 
@@ -45,13 +45,13 @@ I tried nine different rating systems on that data, from a coin flip up through 
 
 {% include figure image_path="/assets/images/champions-cup-final/fig05_model_ladder.png" alt="Model ladder: Brier on 2024-25 holdout" %}
 
-The headline finding is that a 50-line Glicko-2 implementation beats everything fancier in the room. Glicko-2, designed by Mark Glickman for chess, gives every team a rating around 1500 with an uncertainty attached to it. After each match the rating updates by a Bayesian rule that uses the opponent's rating, the result, and the time since the last update. Nothing else. With the home advantage tuned to **200 rating points** on a 2022-24 validation window (much larger than football's, which I take as a real fact about rugby), Glicko-2 lands at Brier 0.172. Bradley-Terry, three Dixon-Coles variants, a Skellam, a negative binomial, and a gradient-boosted tree on engineered features all sit behind it. Rating differential is the only feature I tried that carries any signal at all.
+A 50-line Glicko-2 implementation beats everything fancier in the room. Glicko-2, designed by Mark Glickman for chess, gives every team a rating around 1500 with an uncertainty attached to it. After each match the rating updates by a Bayesian rule that uses the opponent's rating, the result, and the time since the last update. Nothing else. With the home advantage tuned to **200 rating points** on a 2022-24 validation window (much larger than football's, which I take as a real fact about rugby), Glicko-2 lands at Brier 0.172. Bradley-Terry, three Dixon-Coles variants, a Skellam, a negative binomial, and a gradient-boosted tree on engineered features all sit behind it. Rating differential is the only feature I tried that carries any signal at all.
 
-But Glicko, fed twelve years of European rugby, predicts **Bordeaux at about 32%** for Saturday. The market is at 60%. A near-thirty-point gap on a market this size is not something to publish without first asking the model some hard questions.
+But Glicko, fed twelve years of European rugby, predicts **Bordeaux at about 32%** for Saturday. The market is at 60%. A near-thirty-point gap on a market this size deserves stress-testing before I trust it.
 
 ## What I tried that didn't work
 
-Confession: at this point, what I was really doing was trying to bribe the model into preferring Bordeaux. Every candidate change below is in principle a defensible piece of statistical hygiene. In practice I was hoping at least one of them would make my model agree with my heart. The bar I had set was the same throughout: each candidate had to improve Brier on the 2024-25 Champions Cup matches specifically, by at least 3% relative, without degrading calibration. A bar I had set, very deliberately, before any of the candidates were run.
+Confession: at this point, what I was really doing was trying to bribe the model into preferring Bordeaux. Every candidate change below is in principle a defensible piece of statistical hygiene. In practice I was hoping one of them would make the model agree with my heart. The bar was the same throughout, set in advance: each candidate had to improve Brier on the 2024-25 Champions Cup matches by at least 3% relative, without degrading calibration.
 
 **Squad rotation, Bordeaux side.** Top 14 is a 26-round league plus playoffs against URC's 18 regular-season rounds. Bordeaux plays a third more domestic matches than Leinster in a normal season, more in a year that reaches a Champions Cup final, and any reasonable coach rests key players around the big European weekends. Bordeaux's 14W 10L 1D Top 14 record might look ordinary partly because some of those losses are tactical. I built a rotation-weighted Glicko using lineup data: parse each matchday squad, compare to that club's Champions Cup starting XV (since nobody rotates in the pool stage), and weight matches by how close the on-field side was to the A-team. The data showed Bordeaux rotating modestly around European fixtures, less than Leinster does in URC, but the rotation-weighted model failed the cup-Brier test. The hypothesis is real; the correction doesn't help on the holdout.
 
@@ -61,7 +61,7 @@ Confession: at this point, what I was really doing was trying to bribe the model
 
 **Style interactions.** Maybe certain playing styles match up unevenly: a pick-and-go forward pack might struggle against a wide-running attack, or vice versa, in ways that rating differential can't capture. I fed a gradient-boosted tree both teams' rolling tries scored, tries conceded, points conceded, and head-to-head record, so the model could find interactions like "high-attack team vs high-defence team" if they existed. Cup Brier got worse and the prediction on Saturday's final dropped Bordeaux from 39% to 30%. There may be style-matchup effects in rugby, but they're not strong enough in our feature set to beat the rating differential.
 
-Four hypotheses tested, four rejections. The model and the market were starting to look genuinely at odds, not tunable.
+Four hypotheses, four rejections. The model and the market were starting to look like an honest disagreement.
 
 ## The hypothesis that worked
 
@@ -75,11 +75,11 @@ Glicko-2 ignores margin entirely. A 64-14 demolition and a 1-point heart attack 
 
 Bordeaux didn't just win their three knockouts. They averaged a 25-point margin doing it, including a quarter-final dismantling of the team currently top of Top 14. Leinster averaged 17 points across theirs, and one of their wins was a one-score game with about a minute left.
 
-And the same pattern shows up across the panel, not just this season. Take every European cup match in the last twelve years, work out the margin Glicko would have predicted from the rating gap, and subtract it from the actual margin. The result, per team, is a distribution of "points scored above expectation":
+The pattern holds across the full panel, not just this season. Take every European cup match in the last twelve years, work out the margin Glicko would have predicted from the rating gap, and subtract it from the actual margin. The result, per team, is a distribution of "points scored above expectation":
 
 {% include figure image_path="/assets/images/champions-cup-final/fig02_cup_overperformance_scatter.png" alt="Bordeaux's CC matches sit clearly above expectation; Leinster's sit on it" %}
 
-Bordeaux's mean sits well to the right of zero. Leinster's mean sits exactly on zero. The two of them have played radically different versions of the Champions Cup over a decade: Bordeaux's wins have been bigger than their rating would suggest, Leinster's have been precisely as big as their rating predicts. Edinburgh and Benetton, who play in the URC but make nuisances of themselves in Europe, sit further right than Bordeaux. That is not the pattern I would have produced if I were tuning the model to flatter my team.
+Bordeaux's mean sits well to the right of zero. Leinster's mean sits exactly on zero. The two of them have played different Champions Cups for a decade: Bordeaux's wins have been bigger than their rating would suggest, Leinster's precisely as big as it predicts. Edinburgh and Benetton, who play in the URC but make nuisances of themselves in Europe, sit further right than Bordeaux. It is not the pattern you would expect if I were tuning the model to flatter my team.
 
 {% include figure image_path="/assets/images/champions-cup-final/fig07_cup_dominance.png" alt="European cup overperformers, multi-season" %}
 
@@ -89,7 +89,7 @@ The right way to use this is to bake margin of victory into the rating system. I
 - **ECE: 0.10 → 0.07 (better calibration)**
 - **Full-season Brier: 0.172 → 0.170 (no degradation outside cup matches)**
 
-A clean pass on every metric I had picked in advance. The change held up on a sister validation too: applied to the Challenge Cup final the next night (Ulster vs Montpellier), the same model gives Montpellier 75% — exactly the bookmaker line. The same single change that closed half the Champions Cup gap closed the entire Challenge Cup one as a side effect. That is what a real signal looks like.
+A clean pass on every metric I had picked in advance. The change held up on a sister validation too: applied to the Challenge Cup final the next night (Ulster vs Montpellier), the same model gives Montpellier 75%, exactly the bookmaker line. The same single change that closed half the Champions Cup gap closed the entire Challenge Cup one as a side effect. That is what a real signal looks like, not a tune-to-target.
 
 ## The journey
 
@@ -97,19 +97,19 @@ A clean pass on every metric I had picked in advance. The change held up on a si
 
 After everything, the working model puts Bordeaux at **45%**. The market is at 60%. The gap has halved.
 
-The remaining 15 points are honestly open. Polymarket has been trading this match for weeks, so it sees team news and training reports my model doesn't. There may be cup-form effects I haven't captured beyond margin of victory. Or the market might just be a few points off. The Bayesian framework is built for exactly this kind of standing disagreement: over the next five days, as new Polymarket prices print, I update toward the market in proportion to how much it has moved. If the consensus tightens onto my prior, I take the offer. If it doesn't, I sit out.
+The remaining 15 points are open. Polymarket has been trading this match for weeks, so it sees team news and training reports my model doesn't. There may be cup-form effects beyond margin of victory that I haven't captured. The market might just be a few points off. The Bayesian framework handles exactly this kind of standing disagreement: over the next five days, as new Polymarket prices print, I update toward the market in proportion to how much it has moved. If the consensus tightens onto my prior, I take the offer. If it doesn't, I sit out.
 
 {% include figure image_path="/assets/images/champions-cup-final/fig08_posterior_density.png" alt="Bayesian DC posterior on P(Bordeaux)" %}
 
 ## What I do
 
-The model says Leinster, mildly. The market says Bordeaux, firmly. I have spent two weeks building the model precisely so that I'd trust it more than my instincts.
+The model says Leinster, mildly. The market says Bordeaux, firmly. I have spent two weeks building the model precisely so I would trust it over my instincts.
 
-So I will probably bet against the team I am driving four hundred kilometres to support. Small size — enough to carry some skin, not enough to spoil the beer. The pleasure of a contrarian bet on your own team is that it works either way. If Bordeaux win, I am in the stadium losing a bet I would happily pay to lose. If Leinster win, I am quietly devastated, but the bet pays for the consolation beers, and with luck the next morning's as well. Win-win, on a sufficiently logarithmic utility function.
+So I will probably bet against the team I am driving four hundred kilometres to support. Small size. Enough to carry some skin, not enough to spoil the beer. The pleasure of a contrarian bet on your own team is that it works either way. If Bordeaux win, I am in the stadium losing a bet I would happily pay to lose. If Leinster win, I am quietly devastated, but the bet pays for the consolation beers, and with luck the next morning's as well. Win-win, on a sufficiently logarithmic utility function.
 
-The whole point of building this kind of thing is that the model has a job and your gut has a different job, and you are not supposed to confuse them. If you have built a careful prior and the market is offering you a price outside your 90% credible interval, the framework is telling you something. Take the price.
+The whole point of building one of these is that the model has a job and your gut has a different job, and you do not get to confuse them. If you have built a careful prior and the market is offering you a price outside your 90% credible interval, the framework is telling you something. Take the price.
 
-Whether the math survives kickoff is, of course, a different question.
+Whether the math survives kickoff is a different question.
 
 ---
 
