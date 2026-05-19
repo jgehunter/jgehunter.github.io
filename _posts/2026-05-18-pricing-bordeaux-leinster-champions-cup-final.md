@@ -15,13 +15,13 @@ toc_sticky: true
 mathjax: true
 ---
 
-I'm driving to Bilbao on Friday to watch Bordeaux Bègles play Leinster in the Champions Cup final. Like everyone else who has bought a ticket, I would prefer Bordeaux to win.
+I'm driving to Bilbao on Friday to watch Bordeaux Bègles play Leinster in the Champions Cup final. I want Bordeaux to win.
 
-Polymarket has them at 60.5%. William Hill at the equivalent of 77%. Coral at 75%. The market thinks the team I want to win is the team that ought to win.
+Polymarket has them at 60.5%. William Hill at 77%. Coral at 75%. The market thinks the team I want to win is the team that ought to win.
 
-After two weeks of building a model, testing it, breaking it, and putting it back together, my model thinks Bordeaux is a 45% shot. The slight favourite, in my numbers, is Leinster.
+My model has Bordeaux at 45%. The slight favourite, in my numbers, is Leinster.
 
-What follows is the story of how I got there.
+Here's how I got there.
 
 {% include figure image_path="/assets/images/champions-cup-final/fig00_hero.png" alt="Probability that Bordeaux wins, by source" %}
 
@@ -51,9 +51,9 @@ But Glicko, fed twelve years of European rugby, predicts **Bordeaux at about 32%
 
 ## What I tried that didn't work
 
-If my model and the market disagree by thirty points, one of two things is true: I have an edge, or I am missing something. Before trusting the prior, I tested every hypothesis I could think of for what the model might be missing. The bar was the same throughout: each candidate had to improve Brier on the 2024-25 Champions Cup matches specifically, by at least 3% relative, without degrading calibration.
+A thirty-point disagreement between you and the market is either an edge or a blind spot. Before trusting the prior, I tested every hypothesis I could think of for what the model might be missing. The bar was the same throughout: each candidate had to improve Brier on the 2024-25 Champions Cup matches specifically, by at least 3% relative, without degrading calibration.
 
-**Squad rotation, Bordeaux side.** Top 14 is a 26-round league plus playoffs, against URC's 18-round regular season. Bordeaux plays roughly a third more domestic matches than Leinster, and in a year where they reached the Champions Cup final they almost certainly rested key players around big European fixtures. Their 14W 10L 1D Top 14 record looks ordinary partly because some of those losses are tactical: B-team selections in the weeks bracketing a European pool match. I built a rotation-weighted Glicko using lineup data (parse the matchday-23, compare to each club's Champions Cup starts, weight matches by how close the on-field XV is to the A-team). Bordeaux's losses around European weekends *do* show meaningful rotation. But the rotation-weighted model fails the cup-Brier test: it doesn't predict cup outcomes better than vanilla Glicko.
+**Squad rotation, Bordeaux side.** Top 14 is a 26-round league plus playoffs against URC's 18 regular-season rounds. Bordeaux plays a third more domestic matches than Leinster in a normal season, more in a year that reaches a Champions Cup final, and any reasonable coach rests key players around the big European weekends. Bordeaux's 14W 10L 1D Top 14 record might look ordinary partly because some of those losses are tactical. I built a rotation-weighted Glicko using lineup data: parse each matchday squad, compare to that club's Champions Cup starting XV (since nobody rotates in the pool stage), and weight matches by how close the on-field side was to the A-team. The data showed Bordeaux rotating modestly around European fixtures, less than Leinster does in URC, but the rotation-weighted model failed the cup-Brier test. The hypothesis is real; the correction doesn't help on the holdout.
 
 **Recency decay.** Maybe old matches should count less. I tried half-lives from two months to three years. Every value made cup-holdout Brier worse. Glicko-2's built-in mechanism already does enough recency adjustment; piling on more decay throws away signal.
 
